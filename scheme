@@ -1,0 +1,11 @@
+#!/bin/bash
+
+docker build -t chriszacny/scheme .
+
+if [ $# -eq 0 ]; then
+    docker run -ti --rm chriszacny/scheme
+else
+    basefilename=`ls $1 | xargs -n 1 basename`
+    fullfilepath=`readlink -f $1`
+    docker run -ti -v $fullfilepath:/$basefilename --rm chriszacny/scheme --load /$basefilename
+fi
