@@ -2,10 +2,16 @@
 
 docker build -t chriszacny/scheme .
 
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*) readlinkCommand="readlink";;
+    Darwin*) readlinkCommand="greadlink";;
+esac
+
 if [ $# -eq 0 ]; then
     docker run -ti --rm chriszacny/scheme
 else
     basefilename=`ls $1 | xargs -n 1 basename`
-    fullfilepath=`readlink -f $1`
+    fullfilepath=`${readlinkCommand} -f $1`
     docker run -ti -v $fullfilepath:/$basefilename --rm chriszacny/scheme --load /$basefilename
 fi
